@@ -6,7 +6,6 @@ import json, requests, os
 from .db import get_db
 from .agent.graph import run_agent
 
-import asgi  # provided by Cloudflare runtime
 from workers import WorkerEntrypoint, Response
 
 load_dotenv()
@@ -64,6 +63,7 @@ async def ticker_list():
 # Cloudflare Worker entrypoint
 class Default(WorkerEntrypoint):
     async def fetch(self, request, env, ctx):
+        import asgi
         return await asgi.fetch(app, request, env)
 
 # if __name__ == "__main__": run(app)
