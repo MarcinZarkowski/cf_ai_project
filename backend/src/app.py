@@ -6,8 +6,6 @@ import json, requests, os
 from .db import get_db
 from .agent.graph import run_agent
 
-from workers import WorkerEntrypoint, Response
-
 load_dotenv()
 FRONT_URL = os.getenv("FRONT_URL", "*")
 
@@ -59,11 +57,3 @@ async def ticker_list():
         return resp.json()
     except ValueError:
         raise HTTPException(status_code=500, detail="Invalid JSON from SEC server")
-
-# Cloudflare Worker entrypoint
-class Default(WorkerEntrypoint):
-    async def fetch(self, request, env, ctx):
-        import asgi
-        return await asgi.fetch(app, request, env)
-
-# if __name__ == "__main__": run(app)
