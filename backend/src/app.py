@@ -1,14 +1,16 @@
-from fastapi import FastAPI, Depends, WebSocket
+from fastapi import FastAPI, Depends, WebSocket, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from .db import get_db
-import json
-from .agent.graph import run_agent
-import requests
-import os
 from dotenv import load_dotenv
+import json, requests, os
+
+from .db import get_db
+from .agent.graph import run_agent
+
+import asgi  # provided by Cloudflare runtime
+from workers import WorkerEntrypoint, Response
 
 load_dotenv()
-FRONT_URL = os.environ["FRONT_URL"]
+FRONT_URL = os.getenv("FRONT_URL", "*")
 
 app = FastAPI()
 app.add_middleware(
@@ -20,28 +22,23 @@ app.add_middleware(
 )
 
 @app.websocket("/chat")
-async def chat(websocket: WebSocket, db = Depends(get_db)):
+async def chat(websocket: WebSocket, db=Depends(get_db)):
     try:
         await websocket.accept()
         data = await websocket.receive_text()
-        parsed_data = json.loads(data)
-        query = parsed_data.get("query", "")
+        parsed = json.loads(data)
+        query = parsed.get("query", "")
         response_text = ""
 
         async for message in run_agent(query):
-            if not message["done"]:
-                print(message)
-                if "response" in message:
-                    response_text += message["response"]
-                    await websocket.send_text(json.dumps(message))
-                else:
-                    await websocket.send_text(json.dumps(message))
+            if not message.get("done"):
+                await websocket.send_text(json.dumps(message))
             else:
                 await websocket.send_text(json.dumps({"done": True}))
                 await websocket.close()
                 return
     except Exception as e:
-        print("Error in websocket: ", e)
+        print("Error in websocket:", e)
         try:
             await websocket.send_text(json.dumps({"error": str(e), "done": True}))
             await websocket.close()
@@ -53,15 +50,20 @@ async def ticker_list():
     url = "https://www.sec.gov/files/company_tickers.json"
     headers = {
         "User-Agent": "Bob (bob@example.com)",
-        "Accept": "application/json"
+        "Accept": "application/json",
     }
     resp = requests.get(url, headers=headers)
     if resp.status_code != 200:
         raise HTTPException(status_code=resp.status_code, detail="Failed to fetch SEC tickers")
 
     try:
-        data = resp.json()
+        return resp.json()
     except ValueError:
         raise HTTPException(status_code=500, detail="Invalid JSON from SEC server")
 
-    return data
+# Cloudflare Worker entrypoint
+class Default(WorkerEntrypoint):
+    async def fetch(self, request, env, ctx):
+        return await asgi.fetch(app, request, env)
+
+# if __name__ == "__main__": run(app)

@@ -18,6 +18,5 @@ dependencies = [
     "requests>=2.32.5",
     "sqlalchemy>=2.0.44",
     "timedelta>=2020.12.3",
-    "uvicorn>=0.37.0",
     "websockets>=15.0.1",
 ]
