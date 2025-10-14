@@ -1,0 +1,112 @@
+
+/* Root colors and fonts */
+:root {
+  --background: #0a0f0a; /* very dark green */
+  --foreground: #c5e1c5; /* soft light green for text */
+  --accent: #4ade80;     /* brighter green (success/hover) */
+  --muted: #1a2b1a;      /* slightly lighter dark green for panels/cards */
+
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color: var(--foreground);
+  background-color: var(--background);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color-scheme: dark;
+}
+
+/* Body adjustments */
+body {
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex;
+  place-items: center;
+  overflow: auto !important;
+  min-width: 320px;
+  min-height: 100vh;
+  background: var(--background);
+  color: var(--foreground);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 0px;
+  background: var(--muted); /* hidden but fallback color */
+}
+
+/* Container sizing */
+.container {
+  margin-left: 5vw;
+  margin-right: 5vw;
+}
+@media (min-width: 640px) {
+  .container {
+    margin-left: 4rem;
+    margin-right: 4rem;
+  }
+}
+@media (min-width: 1024px) {
+  .container {
+    margin-left: 6rem;
+    margin-right: 6rem;
+  }
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  color: white;
+  margin: 0.5em 0;
+}
+
+/* Links */
+a {
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+a:hover {
+  color: #22c55e; /* lighter hover green */
+}
+
+/* Buttons */
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--muted);
+  color: var(--foreground);
+  cursor: pointer;
+  transition: border-color 0.25s, color 0.25s, background-color 0.25s;
+}
+button:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* Card/panel styling */
+.card {
+  background: var(--muted);
+  border: 1px solid var(--accent);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+/* Errors and notifications */
+.error {
+  color: #ff4d4f !important;
+  font-weight: 400;
+  font-size: small;
+}
+.notification {
+  color: #22c55e !important;
+  font-weight: 400;
+  font-size: small;
+}

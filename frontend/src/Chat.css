@@ -1,0 +1,39 @@
+.bot-markdown p {
+  margin: 0.5em 0;
+}
+
+.bot-markdown ul,
+.bot-markdown ol {
+  margin: 0.5em 0 0.5em 1.2em;
+  padding: 0;
+}
+
+.bot-markdown li {
+  margin-bottom: 0.25em;
+}
+
+.bot-markdown code {
+  background: rgba(255,255,255,0.05);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: "Fira Code", monospace;
+  font-size: 0.9em;
+}
+
+.bot-markdown pre {
+  background: rgba(255,255,255,0.05);
+  padding: 0.6em 1em;
+  border-radius: 6px;
+  overflow-x: auto;
+  font-family: "Fira Code", monospace;
+  font-size: 0.9em;
+  margin: 0.5em 0;
+}
+
+.bot-markdown blockquote {
+  border-left: 3px solid #4ade80; /* accent color */
+  padding-left: 12px;
+  margin: 0.5em 0;
+  color: rgba(255,255,255,0.8);
+  font-style: italic;
+}
