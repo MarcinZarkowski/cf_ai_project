@@ -14,6 +14,7 @@ export default function Chat({ tickers }) {
   const [filteredTickers, setFilteredTickers] = useState([]);
   const [showTickerSuggestions, setShowTickerSuggestions] = useState(false);
   const wsRef = useRef(null);
+  const botIsReplying = messages.some(m => m.sender === "bot" && !m.done);
 
   const preparedTickers = useMemo(
     () =>
@@ -194,20 +195,53 @@ export default function Chat({ tickers }) {
 
   return (
    <div
-    style={{
-    padding: 20,
-    fontFamily: "'Inter', 'Open Sans', sans-serif",
-    fontWeight: 400,
-    lineHeight: 1.6,
-    letterSpacing: "0.01em",
-    color: "#fff",
-    height: "90vh",
-    width: "90vw",
-    display: "flex",
-    flexDirection: "column",
-    background: "var(--background, #0b1220)",
-  }}
+        style={{
+        padding: 20,
+        fontFamily: "'Inter', 'Open Sans', sans-serif",
+        fontWeight: 400,
+        lineHeight: 1.6,
+        letterSpacing: "0.01em",
+        color: "#fff",
+        height: "90vh",
+        width: "90vw",
+        display: "flex",
+        flexDirection: "column",
+        background: "var(--background, #0b1220)",
+    }}
     >
+        {messages.length === 0 && 
+        <>
+            <div
+            style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+                fontSize: "18px",
+                fontWeight: "bold",
+                color: "white",
+                textAlign: "center",
+            }}
+            >
+            This is a chatbot specializing in current investment news.
+            </div>
+            <div
+            style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flex: 1,
+                fontSize: "12px",
+                fontWeight: "bold",
+                color: "white",
+                textAlign: "center",
+            }}
+            >
+            Always include the ticker of the company you want to talk about, use '#' for suggestions
+            </div>
+        </>
+        }
+
       <div style={{ flex: 1, overflowY: "auto", marginBottom: 20, paddingRight: 10 }}>
         {error && <div style={{ color: "red" }}>{error}</div>}
         {messages.map((m, i) => {
@@ -301,12 +335,29 @@ export default function Chat({ tickers }) {
     }}
       >
         <input
-          value={input}
-          onChange={handleInputChange}
-          placeholder="Ask me about stocks... (Use '#' to bring up ticker reccomendation based on your input, always include ticker symbols of the companies you want to talk about.)"
-          style={{ flex:1, padding:"10px 12px", borderRadius:6, background:"transparent", color:"#fff", fontSize:15, border:"none", outline:"none" }}
+            value={input}
+            onChange={handleInputChange}
+            placeholder="Ask me about stocks... (Always include the ticker of the company you want to talk about, us '#' for suggestions)"
+            style={{ flex:1, padding:"10px 12px", borderRadius:6, background:"transparent", color:"#fff", fontSize:15, border:"none", outline:"none" }}
+            disabled={botIsReplying}
         />
-        <button type="submit" style={{ padding:"10px 14px", borderRadius:8, border:"1px #39ff14", cursor:"pointer", fontWeight:600, fontSize:15 }}>Send</button>
+
+        
+        <button
+        type="submit"
+        disabled={botIsReplying || !input.trim()}
+        style={{
+            padding:"10px 14px",
+            borderRadius:8,
+            border:"1px #39ff14",
+            cursor: botIsReplying ? "not-allowed" : "pointer",
+            fontWeight:600,
+            fontSize:15,
+            opacity: botIsReplying ? 0.5 : 1
+        }}
+        >
+            Send
+        </button>
 
         {showTickerSuggestions && filteredTickers.length>0 && (
           <div style={{
